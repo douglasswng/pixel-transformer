@@ -3,7 +3,7 @@ import random
 from dataloader.word_dataclass import Coordinate, Word, Pause
 from constants import IMG_H, IMG_W, RAW_COORD_FOLDER
 
-random.seed(42)
+#random.seed(42)
 
 def rescale(coordinates: List[Coordinate], scale_factor: float) -> List[Coordinate]:
     rescaled_coords = []
@@ -35,7 +35,7 @@ class WordAugmenter:
         self.rescale_factor_range = (0.8, 1.2)
         self.shear_factor_range = (-0.3, 0.3)
         self.translate_range = (-4, 4)
-        self.subsample_factor_range = (0.2, 0.4)
+        self.subsample_factor_range = (0.7, 1.0)
 
     def _normalize_coordinates(self, coordinates: List[Coordinate], center: bool = True) -> List[Coordinate]:
         min_x = min(coord.x for coord in coordinates)
@@ -206,7 +206,7 @@ class WordAugmenter:
 
 if __name__ == '__main__':
     import json
-    raw_coord_path = list(RAW_COORD_FOLDER.iterdir())[20]
+    raw_coord_path = list(RAW_COORD_FOLDER.iterdir())[24]
     with open(raw_coord_path, 'r') as f:
         data = json.load(f)
     word = Word(data['word'], data['tokens'])
