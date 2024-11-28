@@ -27,10 +27,10 @@ ATTENTION_HEADS = 8
 LAYERS = 8
 DROPOUT = 0.1
 
-BATCH_SIZE = 128
-EPOCHS = 15
-LEARNING_RATE = 1e-3
-MIN_LEARNING_RATE = 1e-5
+BATCH_SIZE = 16
+EPOCHS = 100
+LEARNING_RATE = 1e-4
+MIN_LEARNING_RATE = 1e-6
 WEIGHT_DECAY = 1e-5
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'mps' if torch.backends.mps.is_available() else 'cpu')
