@@ -76,8 +76,6 @@ def draw_tokens(tokens: List[Union[Coordinate, Start, Pause, End]]) -> Image.Ima
                 x, y = zip(*current_path)
                 ax.plot(x, y, 'k-', linewidth=2)
                 current_path = []
-        elif isinstance(token, End):
-            break
 
     if current_path:
         x, y = zip(*current_path)
