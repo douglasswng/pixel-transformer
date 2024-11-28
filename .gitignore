@@ -1,9 +1,0 @@
-__pycache__/
-.DS_Store
-.env
-
-data
-checkpoints
-wandb
-
-!/data/**/*.py
