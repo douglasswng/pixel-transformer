@@ -1,0 +1,34 @@
+2024-11-28 09:44:58,849 INFO    MainThread:97107 [wandb_setup.py:_flush():79] Current SDK version is 0.18.7
+2024-11-28 09:44:58,849 INFO    MainThread:97107 [wandb_setup.py:_flush():79] Configure stats pid to 97107
+2024-11-28 09:44:58,850 INFO    MainThread:97107 [wandb_setup.py:_flush():79] Loading settings from /Users/douglasswang/.config/wandb/settings
+2024-11-28 09:44:58,850 INFO    MainThread:97107 [wandb_setup.py:_flush():79] Loading settings from /Users/douglasswang/Desktop/TCL/writing_beaut/pixel_transformer/wandb/settings
+2024-11-28 09:44:58,850 INFO    MainThread:97107 [wandb_setup.py:_flush():79] Loading settings from environment variables: {'api_key': '***REDACTED***'}
+2024-11-28 09:44:58,850 WARNING MainThread:97107 [wandb_setup.py:_flush():79] Could not find program at -m train.base
+2024-11-28 09:44:58,850 INFO    MainThread:97107 [wandb_setup.py:_flush():79] Inferring run settings from compute environment: {'program_relpath': None, 'program': '-m train.base'}
+2024-11-28 09:44:58,850 INFO    MainThread:97107 [wandb_setup.py:_flush():79] Applying login settings: {'api_key': '***REDACTED***'}
+2024-11-28 09:44:58,850 INFO    MainThread:97107 [wandb_setup.py:_flush():79] Applying login settings: {'api_key': '***REDACTED***'}
+2024-11-28 09:44:58,850 INFO    MainThread:97107 [wandb_setup.py:_flush():79] Applying login settings: {}
+2024-11-28 09:44:58,850 INFO    MainThread:97107 [wandb_init.py:_log_setup():533] Logging user logs to /Users/douglasswang/Desktop/TCL/writing_beaut/pixel_transformer/wandb/run-20241128_094458-pb9crbd8/logs/debug.log
+2024-11-28 09:44:58,850 INFO    MainThread:97107 [wandb_init.py:_log_setup():534] Logging internal logs to /Users/douglasswang/Desktop/TCL/writing_beaut/pixel_transformer/wandb/run-20241128_094458-pb9crbd8/logs/debug-internal.log
+2024-11-28 09:44:58,850 INFO    MainThread:97107 [wandb_init.py:init():619] calling init triggers
+2024-11-28 09:44:58,850 INFO    MainThread:97107 [wandb_init.py:init():626] wandb.init called with sweep_config: {}
+config: {'epochs': 10, 'learning_rate': 0.001}
+2024-11-28 09:44:58,850 INFO    MainThread:97107 [wandb_init.py:init():669] starting backend
+2024-11-28 09:44:58,850 INFO    MainThread:97107 [wandb_init.py:init():673] sending inform_init request
+2024-11-28 09:44:58,851 INFO    MainThread:97107 [backend.py:_multiprocessing_setup():104] multiprocessing start_methods=spawn,fork,forkserver, using: spawn
+2024-11-28 09:44:58,851 INFO    MainThread:97107 [wandb_init.py:init():686] backend started and connected
+2024-11-28 09:44:58,854 INFO    MainThread:97107 [wandb_init.py:init():781] updated telemetry
+2024-11-28 09:44:58,869 INFO    MainThread:97107 [wandb_init.py:init():814] communicating run to backend with 90.0 second timeout
+2024-11-28 09:45:31,473 INFO    MainThread:97107 [wandb_init.py:init():867] starting run threads in backend
+2024-11-28 09:45:31,558 INFO    MainThread:97107 [wandb_run.py:_console_start():2456] atexit reg
+2024-11-28 09:45:31,558 INFO    MainThread:97107 [wandb_run.py:_redirect():2305] redirect: wrap_raw
+2024-11-28 09:45:31,558 INFO    MainThread:97107 [wandb_run.py:_redirect():2370] Wrapping output streams.
+2024-11-28 09:45:31,558 INFO    MainThread:97107 [wandb_run.py:_redirect():2395] Redirects installed.
+2024-11-28 09:45:31,560 INFO    MainThread:97107 [wandb_init.py:init():911] run started, returning control to user process
+2024-11-28 09:47:27,185 INFO    MainThread:97107 [wandb_run.py:_finish():2155] finishing run douglasswng/pixel-transformer/pb9crbd8
+2024-11-28 09:47:27,192 INFO    MainThread:97107 [wandb_run.py:_atexit_cleanup():2420] got exitcode: 0
+2024-11-28 09:47:27,193 INFO    MainThread:97107 [wandb_run.py:_restore():2402] restore
+2024-11-28 09:47:27,195 INFO    MainThread:97107 [wandb_run.py:_restore():2408] restore done
+2024-11-28 09:47:30,602 INFO    MainThread:97107 [wandb_run.py:_footer_history_summary_info():3960] rendering history
+2024-11-28 09:47:30,605 INFO    MainThread:97107 [wandb_run.py:_footer_history_summary_info():3992] rendering summary
+2024-11-28 09:47:30,716 INFO    MainThread:97107 [wandb_run.py:_footer_sync_info():3921] logging synced files

@@ -1,0 +1,37 @@
+{
+  "os":  "macOS-14.3-arm64-arm-64bit",
+  "python":  "3.11.10",
+  "startedAt":  "2024-11-28T01:50:35.915662Z",
+  "program":  "-m train.base",
+  "git":  {
+    "remote":  "https://github.com/douglasswng/SML.git",
+    "commit":  "0ab47c8b4ed3f1eba8823b0bb8786ecb81feb263"
+  },
+  "email":  "douglasswng@gmail.com",
+  "root":  "/Users/douglasswang/Desktop/TCL/writing_beaut/pixel_transformer",
+  "host":  "Douglasss-MacBook-Pro-2.local",
+  "username":  "douglasswang",
+  "executable":  "/opt/anaconda3/envs/word_transformer/bin/python",
+  "cpu_count":  10,
+  "cpu_count_logical":  10,
+  "disk":  {
+    "/":  {
+      "total":  "494384795648",
+      "used":  "366669713408"
+    }
+  },
+  "memory":  {
+    "total":  "17179869184"
+  },
+  "cpu":  {
+    "count":  10,
+    "countLogical":  10
+  },
+  "apple":  {
+    "name":  "Apple M1 Pro",
+    "ecpuCores":  2,
+    "pcpuCores":  8,
+    "gpuCores":  16,
+    "memoryGb":  16
+  }
+}

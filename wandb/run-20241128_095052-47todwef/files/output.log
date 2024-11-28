@@ -1,0 +1,4 @@
+Training on device: mps
+Model parameters: 100.82M
+Loading checkpoint: checkpoints/base/epoch_9_7.13.pth
+Total training time: 0.00s
