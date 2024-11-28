@@ -91,7 +91,7 @@ def validate(model, val_loader, criterion):
                 "validation_images": wandb.Image(final_combined_img, caption="Original vs Label vs Predicted (2 random samples)")
             })
 
-    avg_val_loss = total_loss / len(batch)
+    avg_val_loss = total_loss / len(val_loader)
     return avg_val_loss
 
 
