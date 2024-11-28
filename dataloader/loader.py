@@ -98,7 +98,7 @@ def draw_tokens(tokens: List[Union[Coordinate, Start, Pause, End]]) -> Image.Ima
 class WordAugDataset(Dataset):
     def __init__(self, raw_coord_folder: Path):
         self.words = []
-        for raw_coord_file in list(raw_coord_folder.iterdir())[:30]:
+        for raw_coord_file in list(raw_coord_folder.iterdir()):
             with open(raw_coord_file, 'r') as f:
                 data = json.load(f)
             self.words.append(Word(data['word'], data['tokens']))
