@@ -6,4 +6,4 @@ data
 checkpoints
 wandb
 
-!*.py
+!/data/**/*.py
