@@ -83,6 +83,9 @@ def validate(model, val_loader, criterion):
                 pred_token_ids = logits[idx].argmax(dim=-1).cpu().tolist()
                 pred_tokens = to_tokens(pred_token_ids)
                 pred_img = draw_tokens(pred_tokens)
+
+                pred_token_ids = [token for token in pred_token_ids if token != PAD_ID]
+                print(f"Predicted token IDs without pad: {pred_token_ids}")
                 
                 combined_img = np.concatenate([np.array(original_img), np.array(label_img), np.array(pred_img)], axis=1)
                 combined_images.append(combined_img)

@@ -4,7 +4,7 @@ import PIL.Image as Image
 import matplotlib.pyplot as plt
 from dataloader.word_dataclass import Word
 from dataloader.word_dataclass import Coordinate, Start, Pause, End
-from constants import IMG_W, IMG_H, SPECIAL_TOKENS, TOKEN_COUNT, PAD_ID, START_ID, MOVE_ID, DRAW_ID, END_ID
+from constants import IMG_W, IMG_H, SPECIAL_TOKEN_COUNT, TOKEN_COUNT, PAD_ID, START_ID, MOVE_ID, DRAW_ID, END_ID
 
 def to_id(word: Word, target_len: Optional[int] = None) -> List[int]:
     token_ids = []
@@ -19,7 +19,7 @@ def to_id(word: Word, target_len: Optional[int] = None) -> List[int]:
             else:
                 token_ids.append(DRAW_ID)
             x, y = int(token.x), int(token.y)
-            token_id = x + IMG_W * y + len(SPECIAL_TOKENS)
+            token_id = x + IMG_W * y + SPECIAL_TOKEN_COUNT
             token_ids.append(token_id)
         elif isinstance(token, Pause):
             pass
@@ -51,7 +51,7 @@ def to_tokens(ids: List[int]) -> List[Union[Coordinate, Start, Pause, End]]:
         elif id == DRAW_ID:
             draw_mode = True
         else:
-            adjusted_id = id - len(SPECIAL_TOKENS)
+            adjusted_id = id - SPECIAL_TOKEN_COUNT
             x = adjusted_id % IMG_W
             y = adjusted_id // IMG_W
             tokens.append(Coordinate(x=x, y=y))
