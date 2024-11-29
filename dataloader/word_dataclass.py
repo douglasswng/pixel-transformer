@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import List, Union
-from constants import START_TOKEN, PAUSE_TOKEN, END_TOKEN
 
 @dataclass
 class Coordinate:
@@ -9,15 +8,15 @@ class Coordinate:
 
 @dataclass
 class Start:
-    type: str = START_TOKEN
+    pass
 
 @dataclass
 class Pause:
-    type: str = PAUSE_TOKEN
+    pass
 
 @dataclass
 class End:
-    type: str = END_TOKEN
+    pass
 
 class Word:
     def __init__(self, word: str, tokens: List[dict]):
