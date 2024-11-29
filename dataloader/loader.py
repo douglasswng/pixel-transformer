@@ -25,7 +25,7 @@ def to_id(word: Word, target_len: int) -> List[int]:
     token_ids = []
     for token in word.tokens:
         if isinstance(token, Coordinate):
-            x, y = token.x, token.y
+            x, y = int(token.x), int(token.y)
             token_id = x + IMG_W * y + len(SPECIAL_TOKENS)
             token_ids.append(token_id)
         elif isinstance(token, Start):

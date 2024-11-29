@@ -11,7 +11,7 @@ PRETTY_COORD_FOLDER = Path('data') / 'pretty_coord'
 PRETTY_CHECKPOINT_FOLDER = Path('checkpoints') / 'pretty'
 
 IMG_H = 64
-IMG_W = 256
+IMG_W = 128
 
 START_TOKEN = '<start>'
 PAUSE_TOKEN = '<pause>'
