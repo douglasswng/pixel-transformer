@@ -21,10 +21,9 @@ def process_xml_content(root):
                 strokes.append(points)
     return strokes
 
-
-WORD_GAP_THRESHOLD_RATIO = 0.02
-
 def process_strokes(strokes):
+    WORD_GAP_THRESHOLD_RATIO = 0.02
+
     width = max(x for stroke in strokes for x, _ in stroke) - min(x for stroke in strokes for x, _ in stroke)
     words = []
     word = []
