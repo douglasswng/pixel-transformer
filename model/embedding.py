@@ -1,10 +1,11 @@
 import torch.nn as nn
+from dataloader.loader import pad_id
 from constants import TOKEN_COUNT, MODEL_DIM
 
 class Embedding(nn.Module):
     def __init__(self, token_count: int = TOKEN_COUNT, model_dim: int = MODEL_DIM):
         super().__init__()
-        self.token_embedding = nn.Embedding(token_count, model_dim)
+        self.token_embedding = nn.Embedding(token_count, model_dim, padding_idx=pad_id)
         nn.init.normal_(self.token_embedding.weight, mean=0, std=0.02)
 
     def forward(self, input_ids):
