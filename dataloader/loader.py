@@ -1,98 +1,19 @@
 from pathlib import Path
-from typing import List, Tuple, Union
+from typing import List, Tuple
 import random
 import copy
-import io
 import json
-import PIL.Image as Image
 import matplotlib.pyplot as plt
 import torch
 from torch.utils.data import Dataset, DataLoader
 from dataloader.word_dataclass import Word
 from dataloader.augment import WordAugmenter
-from dataloader.word_dataclass import Coordinate, Start, Pause, End
-from constants import RAW_COORD_FOLDER, MAX_SEQ_LEN, IMG_W, IMG_H, SPECIAL_TOKENS, TOKEN_COUNT, BATCH_SIZE
+from utils.tokens import to_id, to_tokens
+from constants import RAW_COORD_FOLDER, MAX_SEQ_LEN, BATCH_SIZE, PAD_ID
 
 random.seed(42)
 torch.manual_seed(42)
 
-pad_id = 0
-start_id = 1
-pause_id = 2
-end_id = 3
-
-def to_id(word: Word, target_len: int) -> List[int]:
-    token_ids = []
-    for token in word.tokens:
-        if isinstance(token, Coordinate):
-            x, y = int(token.x), int(token.y)
-            token_id = x + IMG_W * y + len(SPECIAL_TOKENS)
-            token_ids.append(token_id)
-        elif isinstance(token, Start):
-            token_ids.append(start_id)
-        elif isinstance(token, Pause):
-            token_ids.append(pause_id)
-        elif isinstance(token, End):
-            token_ids.append(end_id)
-
-    for id in token_ids:
-        if id > TOKEN_COUNT - 1:
-            raise ValueError(f"Token ID {id} exceeds the maximum allowed value of {TOKEN_COUNT}")
-        
-    return token_ids + [pad_id] * (target_len - len(token_ids))
-
-def to_tokens(ids: List[int]) -> List[Union[Coordinate, Start, Pause, End]]:
-    tokens = []
-    for id in ids:
-        if id == pad_id:
-            continue
-        elif id == start_id:
-            tokens.append(Start())
-        elif id == pause_id:
-            tokens.append(Pause())
-        elif id == end_id:
-            tokens.append(End())
-        else:
-            adjusted_id = id - (len(SPECIAL_TOKENS))
-            x = adjusted_id % IMG_W
-            y = adjusted_id // IMG_W
-            tokens.append(Coordinate(x=x, y=y))
-    return tokens
-
-def draw_tokens(tokens: List[Union[Coordinate, Start, Pause, End]]) -> Image.Image:
-    fig, ax = plt.subplots(figsize=(5, 5))
-    ax.set_xlim(0, IMG_W)
-    ax.set_ylim(IMG_H, 0)
-    ax.axis('off')
-
-    fig.patch.set_facecolor('white')
-
-    current_path = []
-    for token in tokens:
-        if isinstance(token, Coordinate):
-            current_path.append((token.x, token.y))
-        elif isinstance(token, Pause):
-            if current_path:
-                x, y = zip(*current_path)
-                ax.plot(x, y, 'k-', linewidth=2)
-                current_path = []
-
-    if current_path:
-        x, y = zip(*current_path)
-        ax.plot(x, y, 'k-', linewidth=2)
-
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png', dpi=100, bbox_inches='tight', pad_inches=0, facecolor='white')
-    buf.seek(0)
-    img = Image.open(buf)
-    
-    border_size = 10
-    bordered_img = Image.new('RGB', (img.width + 2*border_size, img.height + 2*border_size), color='lightgrey')
-    bordered_img.paste(img, (border_size, border_size))
-
-    plt.close(fig)
-    return bordered_img
-    
 class WordAugDataset(Dataset):
     def __init__(self, raw_coord_folder: Path):
         self.words = []
@@ -123,29 +44,22 @@ class WordAugDataset(Dataset):
 def collate_fn(batch: List[Tuple[Word, Word, str]]) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
     augmented_words1, augmented_words2, words = zip(*batch)
     
-    encoder_max_len = max(len(w1.tokens) for w1 in augmented_words1)
-    decoder_max_len = max(len(w2.tokens) for w2 in augmented_words2)
-    
-    encoder_input_ids = [to_id(w1, encoder_max_len) for w1 in augmented_words1]
-    decoder_input_ids = [to_id(w2, decoder_max_len) for w2 in augmented_words2]
+    encoder_input_ids = [to_id(word) for word in augmented_words1]
+    decoder_input_ids = [to_id(word) for word in augmented_words2]
 
-    label_ids = []
-    for seq in decoder_input_ids:
-        shifted = seq[1:]
-        label_ids.append(shifted)
-    
-    encoder_pad = [
-        [1 if id != pad_id else 0 for id in seq]
-        for seq in encoder_input_ids
-    ]
+    max_encoder_len = max(len(seq) for seq in encoder_input_ids)
+    max_decoder_len = max(len(seq) for seq in decoder_input_ids)
 
-    decoder_pad = [
-        [1 if id != pad_id else 0 for id in seq]
-        for seq in decoder_input_ids
-    ]
+    encoder_input_ids_padded = [seq + [PAD_ID] * (max_encoder_len - len(seq)) for seq in encoder_input_ids]
+    decoder_input_ids_padded = [seq + [PAD_ID] * (max_decoder_len - len(seq)) for seq in decoder_input_ids]
+
+    label_ids = [seq[1:] for seq in decoder_input_ids_padded]
+
+    encoder_pad = [[1 if id != PAD_ID else 0 for id in seq] for seq in encoder_input_ids_padded]
+    decoder_pad = [[1 if id != PAD_ID else 0 for id in seq] for seq in decoder_input_ids_padded]
     
-    encoder_input_ids = torch.tensor(encoder_input_ids, dtype=torch.long)
-    decoder_input_ids = torch.tensor(decoder_input_ids, dtype=torch.long)
+    encoder_input_ids = torch.tensor(encoder_input_ids_padded, dtype=torch.long)
+    decoder_input_ids = torch.tensor(decoder_input_ids_padded, dtype=torch.long)
     encoder_pad = torch.tensor(encoder_pad, dtype=torch.bool)
     decoder_pad = torch.tensor(decoder_pad, dtype=torch.bool)
     label_ids = torch.tensor(label_ids, dtype=torch.long)
@@ -182,6 +96,7 @@ def create_dataloaders(batch_size: int = BATCH_SIZE, train_ratio: float = 0.8) -
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
     from collections import Counter
+    from utils.tokens import draw_tokens
 
     train_loader, val_loader = create_dataloaders()
     print(f"Number of training batches: {len(train_loader)}")

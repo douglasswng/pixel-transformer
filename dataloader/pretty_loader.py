@@ -7,12 +7,11 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from dataloader.word_dataclass import Word
 from dataloader.augment import WordAugmenter
-from constants import PRETTY_COORD_FOLDER, BATCH_SIZE
+from utils.tokens import to_id
+from constants import PRETTY_COORD_FOLDER, BATCH_SIZE, PAD_ID
 
 random.seed(42)
 torch.manual_seed(42)
-
-from dataloader.loader import pad_id, to_id
 
 class PrettyWordDataset(Dataset):
     def __init__(self, pretty_coord_folder: Path):
@@ -52,12 +51,12 @@ def collate_fn(batch: List[Tuple[Word, Word]]) -> Tuple[torch.Tensor, torch.Tens
         label_ids.append(shifted)
     
     encoder_pad = [
-        [1 if id != pad_id else 0 for id in seq]
+        [1 if id != PAD_ID else 0 for id in seq]
         for seq in encoder_input_ids
     ]
 
     decoder_pad = [
-        [1 if id != pad_id else 0 for id in seq]
+        [1 if id != PAD_ID else 0 for id in seq]
         for seq in decoder_input_ids
     ]
     

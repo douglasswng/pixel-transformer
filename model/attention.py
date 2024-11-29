@@ -6,7 +6,7 @@ class RotaryPostionalEmbedding(nn.Module):
     def __init__(self, model_dimension: int = MODEL_DIM, max_seq_len: int = MAX_SEQ_LEN):
         super().__init__()
         theta = torch.tensor([10000 ** (-2 * i / model_dimension) for i in range(model_dimension // 2)])
-        m_theta = torch.stack([m * theta for m in range(1, max_seq_len+1)])       
+        m_theta = torch.stack([m * theta for m in range(1, 2 * max_seq_len+1)])       
         m_theta = m_theta.repeat_interleave(2, dim=-1)
         self.register_buffer('cos', torch.cos(m_theta))
         self.register_buffer('sin', torch.sin(m_theta))

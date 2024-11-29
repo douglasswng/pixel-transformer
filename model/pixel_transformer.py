@@ -4,8 +4,7 @@ from torch import nn
 from model.encoder import Encoder
 from model.decoder import Decoder
 
-from dataloader.loader import start_id, end_id
-from constants import MODEL_DIM, TOKEN_COUNT, MAX_SEQ_LEN, DEVICE
+from constants import MODEL_DIM, TOKEN_COUNT, MAX_SEQ_LEN, DEVICE, START_ID, END_ID, TOKEN_COUNT
 
 class PixelTransformer(nn.Module):
     def __init__(self, model_dim: int = MODEL_DIM, token_count: int = TOKEN_COUNT):
@@ -27,7 +26,7 @@ class PixelTransformer(nn.Module):
         encoder_output = self.encoder(encoder_input_ids)
         batch_size = encoder_input_ids.shape[0]
         
-        decoder_input_ids = torch.full((batch_size, 1), start_id, dtype=torch.long, device=DEVICE)
+        decoder_input_ids = torch.full((batch_size, 1), START_ID, dtype=torch.long, device=DEVICE)
         
         for _ in range(max_length - 1):
             decoder_output = self.decoder(decoder_input_ids, encoder_output)
@@ -36,7 +35,7 @@ class PixelTransformer(nn.Module):
             
             decoder_input_ids = torch.cat([decoder_input_ids, next_token.unsqueeze(1)], dim=1)
             
-            if (next_token == end_id).all():
+            if (next_token == END_ID).all():
                 break
         
         return decoder_input_ids

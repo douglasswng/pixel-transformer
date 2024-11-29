@@ -8,7 +8,8 @@ import torch.optim as optim
 from torch.optim.lr_scheduler import CosineAnnealingLR
 import numpy as np
 from tqdm import tqdm
-from dataloader.loader import create_dataloaders, to_tokens, draw_tokens, pad_id
+from dataloader.loader import create_dataloaders
+from utils.tokens import to_tokens, draw_tokens
 from model.pixel_transformer import PixelTransformer
 from constants import (
     BASE_CHECKPOINT_FOLDER,
@@ -18,6 +19,7 @@ from constants import (
     MIN_LEARNING_RATE,
     WEIGHT_DECAY,
     DEVICE,
+    PAD_ID
 )
 
 random.seed(42)
@@ -143,7 +145,7 @@ def load_latest_checkpoint(model, optimizer, scheduler):
 
 
 def main():
-    # reset()
+    reset()
     initialise_wandb()
 
     print(f"Training on device: {DEVICE}")
@@ -155,7 +157,7 @@ def main():
 
     optimizer = optim.AdamW(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
     scheduler = CosineAnnealingLR(optimizer, T_max=EPOCHS, eta_min=MIN_LEARNING_RATE)
-    criterion = torch.nn.CrossEntropyLoss(ignore_index=pad_id)
+    criterion = torch.nn.CrossEntropyLoss(ignore_index=PAD_ID)
 
     start_epoch, last_train_loss, last_val_loss = load_latest_checkpoint(model, optimizer, scheduler)
 

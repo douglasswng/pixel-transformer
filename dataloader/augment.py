@@ -48,7 +48,7 @@ class WordAugmenter:
         self.normalize_padding = 5
         self.rescale_factor_range = (0.7, 1)
         self.translate_range = (-5, 5)
-        self.subsample_step_range = (1, 2)
+        self.subsample_step_range = (1.5, 2.5)
 
     def _random_shear(self, coordinates: List[Coordinate]) -> List[Coordinate]:
         shear_factor = random.uniform(*self.shear_factor_range)
@@ -72,8 +72,8 @@ class WordAugmenter:
             mean_y = (new_min_y + new_max_y) / 2
 
             if not center:
-                std_x = (new_max_x - new_min_x) / 4
-                std_y = (new_max_y - new_min_y) / 4
+                std_x = max((new_max_x - new_min_x) / 4, 0)
+                std_y = max((new_max_y - new_min_y) / 4, 0)
                 a, b = -2, 2  # Truncate to ±2 standard deviations
                 mean_x = truncnorm.rvs(a, b, loc=mean_x, scale=std_x)
                 mean_y = truncnorm.rvs(a, b, loc=mean_y, scale=std_y)
@@ -92,8 +92,8 @@ class WordAugmenter:
         else:
             true_center_x = new_min_x + available_width / 2
             true_center_y = new_min_y + available_height / 2
-            std_x = available_width / 4
-            std_y = available_height / 4
+            std_x = max(available_width / 4, 0)
+            std_y = max(available_height / 4, 0)
             a, b = -2, 2  # Truncate to ±2 standard deviations
             offset_x = truncnorm.rvs(a, b, loc=true_center_x, scale=std_x)
             offset_y = truncnorm.rvs(a, b, loc=true_center_y, scale=std_y)
