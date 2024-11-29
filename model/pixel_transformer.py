@@ -43,6 +43,12 @@ class PixelTransformer(nn.Module):
 
 if __name__ == '__main__':
     model = PixelTransformer().to(DEVICE)
+    num_params = sum(p.numel() for p in model.parameters())    
+    memory_size = sum(p.numel() * p.element_size() for p in model.parameters())    
+    print(f"Number of parameters: {num_params:,}")
+    print(f"Memory size: {memory_size / (1024 * 1024):.2f} MB")
+    
+    raise
     from dataloader.loader import train_loader, val_loader
     from dataloader.loader import to_tokens
     for batch in val_loader:
