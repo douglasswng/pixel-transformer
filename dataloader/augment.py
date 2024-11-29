@@ -1,7 +1,7 @@
 from typing import List
 import random
-import math
 import numpy as np
+from scipy.stats import truncnorm
 from dataloader.word_dataclass import Word, Coordinate, Pause
 from constants import IMG_H, IMG_W, RAW_COORD_FOLDER
 
@@ -63,17 +63,26 @@ class WordAugmenter:
         new_min_x, new_min_y = self.normalize_padding, self.normalize_padding
         new_max_x, new_max_y = IMG_W - self.normalize_padding - 1, IMG_H - self.normalize_padding - 1
 
-        scale_x = (new_max_x - new_min_x) / (max_x - min_x) if max_x != min_x else math.inf
-        scale_y = (new_max_y - new_min_y) / (max_y - min_y) if max_y != min_y else math.inf
+        scale_x = (new_max_x - new_min_x) / (max_x - min_x) if max_x != min_x else float('inf')
+        scale_y = (new_max_y - new_min_y) / (max_y - min_y) if max_y != min_y else float('inf')
         scale = min(scale_x, scale_y)
 
-        if scale == math.inf:
-            new_x = (new_min_x + new_max_x) / 2 if center else random.uniform(new_min_x, new_max_x)
-            new_y = (new_min_y + new_max_y) / 2 if center else random.uniform(new_min_y, new_max_y)
-            return [Coordinate(x=new_x, y=new_y)] * len(coordinates)
+        if scale == float('inf'):
+            mean_x = (new_min_x + new_max_x) / 2
+            mean_y = (new_min_y + new_max_y) / 2
+
+            if not center:
+                std_x = (new_max_x - new_min_x) / 4
+                std_y = (new_max_y - new_min_y) / 4
+                a, b = -2, 2  # Truncate to ±2 standard deviations
+                mean_x = truncnorm.rvs(a, b, loc=mean_x, scale=std_x)
+                mean_y = truncnorm.rvs(a, b, loc=mean_y, scale=std_y)
+
+            return [Coordinate(x=mean_x, y=mean_y) for _ in coordinates]
 
         scaled_width = (max_x - min_x) * scale
         scaled_height = (max_y - min_y) * scale
+
         available_width = new_max_x - new_min_x - scaled_width
         available_height = new_max_y - new_min_y - scaled_height
 
@@ -81,12 +90,22 @@ class WordAugmenter:
             offset_x = new_min_x + available_width / 2
             offset_y = new_min_y + available_height / 2
         else:
-            offset_x = new_min_x + random.uniform(0, available_width)
-            offset_y = new_min_y + random.uniform(0, available_height)
+            true_center_x = new_min_x + available_width / 2
+            true_center_y = new_min_y + available_height / 2
+            std_x = available_width / 4
+            std_y = available_height / 4
+            a, b = -2, 2  # Truncate to ±2 standard deviations
+            offset_x = truncnorm.rvs(a, b, loc=true_center_x, scale=std_x)
+            offset_y = truncnorm.rvs(a, b, loc=true_center_y, scale=std_y)
 
-        return [Coordinate(x=scale * (coord.x - min_x) + offset_x,
-                        y=scale * (coord.y - min_y) + offset_y)
-                for coord in coordinates]
+        normalised_coordinates = []
+        for coord in coordinates:
+            normalised_x = scale * (coord.x - min_x) + offset_x
+            normalised_y = scale * (coord.y - min_y) + offset_y
+            normalised_coord = Coordinate(x=normalised_x, y=normalised_y)
+            normalised_coordinates.append(normalised_coord)
+
+        return normalised_coordinates
     
     def _random_rescale(self, coordinates: List[Coordinate]) -> List[Coordinate]:
         rescale_factor_x = random.uniform(*self.rescale_factor_range)
