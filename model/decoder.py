@@ -17,19 +17,19 @@ class DecoderBlock(nn.Module):
 
     def forward(self, x, encoder_output, pad=None, encoder_pad=None):
         residual = x.clone()
-        x = self.norm1(x)
         x = self.self_attention(x, pad=pad, causal_mask=True)
         x = x + residual
+        x = self.norm1(x)
 
         residual = x.clone()
-        x = self.norm2(x)
         x = self.cross_attention(x, encoder_output, pad=pad, context_pad=encoder_pad)
         x = x + residual
+        x = self.norm2(x)
 
         residual = x.clone()
-        x = self.norm3(x)
         x = self.ffn(x)
         x = x + residual
+        x = self.norm3(x)
 
         return x
 

@@ -14,14 +14,14 @@ class EncoderBlock(nn.Module):
 
     def forward(self, x, pad=None):
         residual = x.clone()
-        x = self.norm1(x)
         x = self.attention(x, pad=pad)
         x = x + residual
+        x = self.norm1(x)
 
         residual = x.clone()
-        x = self.norm2(x)
         x = self.ffn(x)
         x = x + residual
+        x = self.norm2(x)
 
         return x
     

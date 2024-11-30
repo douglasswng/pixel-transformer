@@ -29,7 +29,7 @@ class MultiHeadAttention(nn.Module):
         self.attention_heads = attention_heads
         self.head_dimension = model_dimension // attention_heads
         
-        self.pos_embedding = RotaryPostionalEmbedding()
+        #self.pos_embedding = RotaryPostionalEmbedding()
         self.W_q = nn.Linear(model_dimension, model_dimension, bias=False)
         self.W_k = nn.Linear(model_dimension, model_dimension, bias=False)
         self.W_v = nn.Linear(model_dimension, model_dimension, bias=False)
@@ -39,10 +39,10 @@ class MultiHeadAttention(nn.Module):
         self._init_weights()
 
     def _init_weights(self):
-        nn.init.normal_(self.W_q.weight, std=0.02)
-        nn.init.normal_(self.W_k.weight, std=0.02)
-        nn.init.normal_(self.W_v.weight, std=0.02)
-        nn.init.normal_(self.W_o.weight, std=0.02)
+        nn.init.trunc_normal_(self.W_q.weight, std=0.03)
+        nn.init.trunc_normal_(self.W_k.weight, std=0.03)
+        nn.init.trunc_normal_(self.W_v.weight, std=0.03)
+        nn.init.trunc_normal_(self.W_o.weight, std=0.03)
 
     def attention_scores(self, Q_matrix, K_matrix, causal_mask=False):
         Q_matrix = Q_matrix.view(*Q_matrix.shape[:-1], self.attention_heads, self.head_dimension)
@@ -77,8 +77,8 @@ class MultiHeadAttention(nn.Module):
         K_matrix = self.W_k(x)
         V_matrix = self.W_v(x)
 
-        Q_matrix = self.pos_embedding(Q_matrix)
-        K_matrix = self.pos_embedding(K_matrix)
+        #Q_matrix = self.pos_embedding(Q_matrix)
+        #K_matrix = self.pos_embedding(K_matrix)
 
         attention_scores = self.attention_scores(Q_matrix, K_matrix, causal_mask)
         attention_scores = self.dropout(attention_scores)
@@ -102,7 +102,7 @@ class MultiHeadAttention(nn.Module):
         K_matrix = self.W_k(context)
         V_matrix = self.W_v(context)
 
-        Q_matrix = self.pos_embedding(Q_matrix)
+        #Q_matrix = self.pos_embedding(Q_matrix)
 
         attention_scores = self.attention_scores(Q_matrix, K_matrix)
         attention_scores = self.dropout(attention_scores)

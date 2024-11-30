@@ -11,7 +11,6 @@ class PixelTransformer(nn.Module):
     def __init__(self, model_dim: int = MODEL_DIM, token_count: int = TOKEN_COUNT):
         super().__init__()
         self.encoder = Encoder().to(DEVICE)
-        self.abs_pos_embedding = SinusoidalPositionalEmbedding()
         self.decoder = Decoder().to(DEVICE)
         self.classifier = nn.Linear(model_dim, token_count).to(DEVICE)
         self._init_weight()
@@ -22,7 +21,6 @@ class PixelTransformer(nn.Module):
 
     def forward(self, encoder_input_ids, decoder_input_ids, encoder_pad, decoder_pad):
         encoder_output = self.encoder(encoder_input_ids.to(DEVICE), pad=encoder_pad.to(DEVICE))
-        encoder_output = self.abs_pos_embedding(encoder_output)
         decoder_output = self.decoder(decoder_input_ids.to(DEVICE), encoder_output, pad=decoder_pad.to(DEVICE), encoder_pad=encoder_pad.to(DEVICE))
         decoder_output = decoder_output[:, :-1, :]
         logits = self.classifier(decoder_output)

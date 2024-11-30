@@ -13,9 +13,9 @@ class FFNLayer(nn.Module):
         self._init_weights()
 
     def _init_weights(self):
-        nn.init.normal_(self.W_in.weight, std=0.02)
-        nn.init.normal_(self.V_in.weight, std=0.02)
-        nn.init.normal_(self.W_out.weight, std=0.02)
+        nn.init.trunc_normal_(self.W_in.weight, std=0.03)
+        nn.init.trunc_normal_(self.V_in.weight, std=0.03)
+        nn.init.trunc_normal_(self.W_out.weight, std=0.03)
         nn.init.zeros_(self.W_in.bias)
         nn.init.zeros_(self.V_in.bias)
         nn.init.zeros_(self.W_out.bias)
