@@ -17,7 +17,7 @@ class PixelTransformer(nn.Module):
 
     def _init_weight(self):
         self.encoder.embedding.token_embedding.weight = self.decoder.embedding.token_embedding.weight
-        self.classifier.weight = self.decoder.embedding.token_embedding.weight
+        self.classifier.weight = self.encoder.embedding.token_embedding.weight
 
     def forward(self, encoder_input_ids, decoder_input_ids, encoder_pad, decoder_pad, label_ids):
         encoder_output = self.encoder(encoder_input_ids.to(DEVICE), pad=encoder_pad.to(DEVICE))
