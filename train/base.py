@@ -42,7 +42,7 @@ def train(model, batch, optimizer, criterion):
     encoder_input_ids, decoder_input_ids, label_ids, encoder_pad, decoder_pad = batch
     encoder_input_ids, decoder_input_ids, label_ids = encoder_input_ids.to(DEVICE), decoder_input_ids.to(DEVICE), label_ids.to(DEVICE)
     optimizer.zero_grad()
-    logits = model(encoder_input_ids, decoder_input_ids, encoder_pad, decoder_pad)
+    logits = model(encoder_input_ids, decoder_input_ids, encoder_pad, decoder_pad, label_ids)
     loss = criterion(logits.view(-1, logits.size(-1)), label_ids.view(-1))
     loss.backward()
     optimizer.step()
@@ -56,7 +56,7 @@ def validate(model, val_loader, criterion):
         for batch_idx, batch in enumerate(val_loader):
             encoder_input_ids, decoder_input_ids, label_ids, encoder_pad, decoder_pad = batch
             encoder_input_ids, decoder_input_ids, label_ids = encoder_input_ids.to(DEVICE), decoder_input_ids.to(DEVICE), label_ids.to(DEVICE)
-            logits = model(encoder_input_ids, decoder_input_ids, encoder_pad, decoder_pad)
+            logits = model(encoder_input_ids, decoder_input_ids, encoder_pad, decoder_pad, label_ids)
             loss = criterion(logits.view(-1, logits.size(-1)), label_ids.view(-1))
             total_loss += loss.item()
 
@@ -84,8 +84,8 @@ def validate(model, val_loader, criterion):
                 pred_tokens = to_tokens(pred_token_ids)
                 pred_img = draw_tokens(pred_tokens)
 
-                pred_token_ids = [token for token in pred_token_ids if token != PAD_ID]
-                print(f"Predicted token IDs without pad: {pred_token_ids}")
+                pred_token_ids = [pred for pred, label in zip(pred_token_ids, label_token_ids) if label != PAD_ID]
+                print(f"Predicted token IDs: {pred_token_ids}")
                 
                 combined_img = np.concatenate([np.array(original_img), np.array(label_img), np.array(pred_img)], axis=1)
                 combined_images.append(combined_img)
