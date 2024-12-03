@@ -82,14 +82,16 @@ def create_dataloaders(batch_size: int = BATCH_SIZE, train_ratio: float = 0.8) -
         train_dataset,
         batch_size=batch_size,
         shuffle=True,
-        collate_fn=collate_fn
+        collate_fn=collate_fn,
+        drop_last=True
     )
     
     val_loader = DataLoader(
         val_dataset,
         batch_size=batch_size,
         shuffle=False,
-        collate_fn=collate_fn
+        collate_fn=collate_fn,
+        drop_last=True
     )
     
     return train_loader, val_loader
