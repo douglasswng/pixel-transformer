@@ -46,28 +46,19 @@ def train(model, batch, optimizer, criterion):
     loss = criterion(logits.view(-1, logits.size(-1)), label_ids.view(-1))
     loss.backward()
     optimizer.step()
-
-    with torch.no_grad():
-        valid_tokens = (label_ids != PAD_ID).sum().item()
-
-    return loss.item() * valid_tokens, valid_tokens
+    return loss.item()
 
 
 def validate(model, val_loader, criterion):
     model.eval()
     total_loss = 0
-    total_tokens = 0
     with torch.no_grad():
         for batch_idx, batch in enumerate(val_loader):
             encoder_input_ids, decoder_input_ids, label_ids, encoder_pad, decoder_pad = batch
             encoder_input_ids, decoder_input_ids, label_ids = encoder_input_ids.to(DEVICE), decoder_input_ids.to(DEVICE), label_ids.to(DEVICE)
             logits = model(encoder_input_ids, decoder_input_ids, encoder_pad, decoder_pad, label_ids)
             loss = criterion(logits.view(-1, logits.size(-1)), label_ids.view(-1))
-
-            valid_tokens = (label_ids != PAD_ID).sum().item()
-
-            total_loss += loss.item() * valid_tokens
-            total_tokens += valid_tokens
+            total_loss += loss.item()
 
             if batch_idx != 0:
                 continue
@@ -178,26 +169,24 @@ def main():
 
     for epoch in range(start_epoch, EPOCHS):
         epoch_start_time = time.time()
-        total_loss = 0
-        total_tokens = 0
+        epoch_loss = 0
 
         with tqdm(total=len(train_loader), desc=f"Epoch {epoch+1}/{EPOCHS}") as pbar:
             for batch in train_loader:
-                batch_loss, valid_tokens = train(model, batch, optimizer, criterion)
-                total_loss += batch_loss
-                total_tokens += valid_tokens
+                loss = train(model, batch, optimizer, criterion)
+                epoch_loss += loss
                 global_step += 1
 
                 wandb.log({
                     'step': global_step,
-                    'train_loss': batch_loss / valid_tokens if valid_tokens > 0 else 0,
+                    'train_loss': loss,
                     'learning_rate': scheduler.get_last_lr()[0]
                 })
 
                 pbar.update(1)
-                pbar.set_postfix({'loss': f'{batch_loss / valid_tokens if valid_tokens > 0 else 0:.4f}'})
+                pbar.set_postfix({'loss': f'{loss:.4f}'})
 
-        avg_train_loss = total_loss / total_tokens if total_tokens > 0 else 0
+        avg_train_loss = epoch_loss / len(train_loader)
         val_loss = validate(model, val_loader, criterion)
 
         epoch_time = time.time() - epoch_start_time
