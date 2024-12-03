@@ -36,7 +36,8 @@ class WordAugDataset(Dataset):
         augmenter1 = WordAugmenter(copy.deepcopy(word_dataclass))
         augmenter2 = WordAugmenter(copy.deepcopy(word_dataclass))
         augmenter1.random_augment()
-        augmenter2.random_augment()
+        #augmenter2.random_augment()
+        augmenter2.normalize()
         augmented_word1 = augmenter1.word
         augmented_word2 = augmenter2.word
         return augmented_word1, augmented_word2, word
